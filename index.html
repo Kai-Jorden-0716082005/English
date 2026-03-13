@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="listing7.js"></script>
+    <title>Vocabulary Checklist</title>
+    <style>
+        :root {
+            --bg: #f9f9f9;
+            --text: #222;
+            --card: #fff;
+            --accent: #0077cc;
+        }
+
+        body.dark {
+            --bg: #1e1e1e;
+            --text: #e0e0e0;
+            --card: #2c2c2c;
+            --accent: #66b0ff;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: sans-serif;
+            padding: 2rem;
+            font-size: 16px;
+        }
+
+        h2 {
+            margin-bottom: 1rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 0.5rem;
+            font-family: monospace;
+            margin-bottom: 1rem;
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid #ccc;
+        }
+
+        button,
+        select {
+            margin-right: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.4rem 0.6rem;
+            border: none;
+            background: var(--accent);
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card);
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            vertical-align: top;
+        }
+
+        th {
+            background: var(--accent);
+            color: white;
+            text-align: left;
+        }
+
+
+
+        .pronounce-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--accent);
+            font-size: 1em;
+            padding: 0;
+            margin: 0;
+        }
+
+        #popover {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--card);
+            color: var(--text);
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+            z-index: 999;
+            display: none;
+        }
+
+        .pop {
+            height: 80vh;
+            width: max-content;
+            overflow: scroll;
+        }
+
+        #popover table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #popover th,
+        #popover td {
+            border: 1px solid #ccc;
+        }
+
+        #popoverClose {
+            float: right;
+            cursor: pointer;
+            font-weight: bold;
+            /* font-size: 1.2rem; */
+        }
+
+        #change {
+            margin: 0;
+            padding: 0;
+        }
+
+
+
+        #outputTable {
+            height: 90vh;
+            overflow: scroll;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .controlButton {
+            margin: 0;
+            width: 10%;
+            border-radius: 0px;
+        }
+
+        #buttonControl {
+            display: flex;
+            justify-content: space-evenly;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Vocabulary Checklist</h2>
+
+    <label for="formatSelect"><strong>Select Format Type:</strong></label>
+    <select id="formatSelect">
+        <option value="synonym">Synonym</option>
+        <option value="antonym">Antonym</option>
+        <option value="other">One word Substitution</option>
+        <option value="other">Idioms & Phrases</option>
+        <option value="phrasalVerb">Phrasal Verbs</option>
+    </select>
+    <input id="name" value="Vocabulary" type="text">
+
+    <textarea id="markdownInput" placeholder="Paste your markdown here... 
+**(Index). (Word)** 
+**(Definition/Meaning):**--Data--
+**(Synonym/Antonym/English definition/Example):**--Data--"></textarea>
+    <br />
+    <input type="file" id="fileInput" accept=".txt, .md">
+    <button onclick="convert()">Convert</button>
+
+    <button onclick="sortItems()">Sort (Unchecked First)</button>
+    <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+    <button onclick="resizeFont(1)">A+</button>
+    <button onclick="resizeFont(-1)">A-</button>
+    <button onclick="resizeFont(0)">A⭮</button>
+    <button onclick="showPopoverother()">Show All Words</button>
+    <button onclick="convert(); downloadHTML()">Download</button>
+    <button onclick="document.location.href='Synonyms C3.html'">C3 Synonyms</button>
+    <button onclick="document.location.href='Antonyms C6.html'">C6 Antonyms</button>
+    <div id="outputTable"></div>
+
+    <!-- Word popover -->
+    <div id="popover">
+        <span id="popoverClose" onclick="hidePopoverother()">✖</span>
+        <h3 style="display: inline; margin: 0;">All Words</h3>
+        <div class="pop">
+            <table id="copyThis">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Word</th>
+                    </tr>
+                </thead>
+                <tbody id="wordTable"></tbody>
+            </table>
+        </div>
+    </div>
+</body>
+<script>
+    const fileInput = document.getElementById('fileInput');
+const outputBox = document.getElementById('markdownInput');
+
+fileInput.addEventListener('change', (event) => {
+  const file = event.target.files[0]; // Get the first file selected
+
+  if (file) {
+    const reader = new FileReader();
+
+    // This runs once the file is finished loading
+    reader.onload = (e) => {
+      const content = e.target.result;
+      outputBox.value = content; // "Paste" it into the text box
+    };
+
+    // Start reading the file as plain text
+    reader.readAsText(file);
+  }
+});
+</script>
+
+</html>
